@@ -2099,10 +2099,15 @@ class NotificationService:
             if current_length + section_length > max_length:
                 # 发送当前块
                 if current_chunk:
-                    chunk_content = "\n---\n".join(current_chunk)
+                    chunk_content = "\n🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶\n".join(current_chunk)
                     logger.info(f"发送 Telegram 消息块 {chunk_index}...")
                     if not self._send_telegram_message(api_url, chat_id, chunk_content, message_thread_id):
                         all_success = False
+                   
+                    # 新增：每条消息块后补发分隔符
+                    if not self._send_telegram_message(api_url, chat_id, "\n🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶", message_thread_id):
+                        all_success = False
+                       
                     chunk_index += 1
                 
                 # 重置
@@ -2114,9 +2119,13 @@ class NotificationService:
         
         # 发送最后一块
         if current_chunk:
-            chunk_content = "\n---\n".join(current_chunk)
+            chunk_content = "\n🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶🔶\n".join(current_chunk)
             logger.info(f"发送 Telegram 消息块 {chunk_index}...")
             if not self._send_telegram_message(api_url, chat_id, chunk_content, message_thread_id):
+                all_success = False
+
+            # 新增：最后一块后也补发分隔符
+            if not self._send_telegram_message(api_url, chat_id, "\n⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔\n本次分析结束", message_thread_id):
                 all_success = False
                 
         return all_success
